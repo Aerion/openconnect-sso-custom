@@ -4,6 +4,7 @@ import structlog
 from lxml import etree, objectify
 
 from .saml_authenticator import authenticate_in_browser
+from .hostscan import data as hostscan_data
 
 
 logger = structlog.get_logger()
@@ -41,6 +42,7 @@ class Authenticator:
         sso_token = await self._authenticate_in_browser(
             auth_request_response, display_mode
         )
+        self._complete_csd(auth_request_response)
 
         response = self._complete_authentication(auth_request_response, sso_token)
         if not isinstance(response, AuthCompleteResponse):
@@ -71,6 +73,15 @@ class Authenticator:
         return await authenticate_in_browser(
             self.proxy, auth_request_response, self.credentials, display_mode
         )
+
+    def _complete_csd(self, auth_request_response):
+        logger.debug("Sending CSD request", content=hostscan_data)
+        self.session.cookies.set("sdesktop", auth_request_response.host_scan_token)
+        response = self.session.post(
+            self.host.vpn_url + "+CSCOE+/sdesktop/scan.xml?reusebrowser=1",
+            hostscan_data,
+        )
+        logger.info("CSD response received", content=response.content)
 
     def _complete_authentication(self, auth_request_response, sso_token):
         request = _create_auth_finish_request(
@@ -156,6 +167,10 @@ def parse_auth_request_response(xml):
             login_url=xml.auth["sso-v2-login"],
             login_final_url=xml.auth["sso-v2-login-final"],
             token_cookie_name=xml.auth["sso-v2-token-cookie-name"],
+            host_scan_ticket=xml["host-scan"]["host-scan-ticket"],
+            host_scan_token=xml["host-scan"]["host-scan-token"],
+            host_scan_base_url=xml["host-scan"]["host-scan-base-uri"],
+            host_scan_wait_url=xml["host-scan"]["host-scan-wait-uri"],
         )
     except AttributeError as exc:
         raise AuthResponseError(exc)
@@ -178,6 +193,10 @@ class AuthRequestResponse:
     login_url = attr.ib(converter=str)
     login_final_url = attr.ib(converter=str)
     token_cookie_name = attr.ib(converter=str)
+    host_scan_ticket = attr.ib(converter=str)
+    host_scan_token = attr.ib(converter=str)
+    host_scan_base_url = attr.ib(converter=str)
+    host_scan_wait_url = attr.ib(converter=str)
     opaque = attr.ib()
 
 
@@ -209,6 +228,7 @@ def _create_auth_finish_request(host, auth_info, sso_token, version):
     SessionId = getattr(E, "session-id")
     Auth = E.auth
     SsoToken = getattr(E, "sso-token")
+    HostScanToken = getattr(E, "host-scan-token")
 
     root = ConfigAuth(
         {"client": "vpn", "type": "auth-reply", "aggregate-auth-version": "2"},
@@ -218,6 +238,7 @@ def _create_auth_finish_request(host, auth_info, sso_token, version):
         SessionId(),
         auth_info.opaque,
         Auth(SsoToken(sso_token)),
+        HostScanToken(auth_info.host_scan_token),
     )
     return etree.tostring(
         root, pretty_print=True, xml_declaration=True, encoding="UTF-8"
