@@ -1,10 +1,10 @@
 import attr
 import requests
 import structlog
-import subprocess
 from lxml import etree, objectify
 
 from .saml_authenticator import authenticate_in_browser
+from .csd_stub import csd_post
 
 
 logger = structlog.get_logger()
@@ -42,7 +42,13 @@ class Authenticator:
         sso_token = await self._authenticate_in_browser(
             auth_request_response, display_mode
         )
-        self._complete_csd(auth_request_response)
+
+        csd_success = self._complete_csd(auth_request_response)
+        if not csd_success:
+            logger.error("CSD stubbed scan failed")
+            raise AuthenticationError()
+
+        logger.info("CSD stubbed scan successful")
 
         response = self._complete_authentication(auth_request_response, sso_token)
         if not isinstance(response, AuthCompleteResponse):
@@ -75,9 +81,12 @@ class Authenticator:
         )
 
     def _complete_csd(self, auth_request_response):
-        logger.debug("Calling CSD script…")
-        csd_response = subprocess.check_output(["bash", "/usr/lib/openconnect/csd-post.sh", "foo", "-ticket", auth_request_response.host_scan_ticket, "-stub", auth_request_response.host_scan_token])
-        logger.info("CSD response received", content=csd_response)
+        logger.debug("Calling CSD stub")
+        return csd_post(
+            self.host.vpn_url,
+            auth_request_response.host_scan_ticket,
+            auth_request_response.host_scan_token,
+        )
 
     def _complete_authentication(self, auth_request_response, sso_token):
         request = _create_auth_finish_request(
