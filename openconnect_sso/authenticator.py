@@ -1,10 +1,10 @@
 import attr
 import requests
 import structlog
+import subprocess
 from lxml import etree, objectify
 
 from .saml_authenticator import authenticate_in_browser
-from .hostscan import data as hostscan_data
 
 
 logger = structlog.get_logger()
@@ -75,13 +75,9 @@ class Authenticator:
         )
 
     def _complete_csd(self, auth_request_response):
-        logger.debug("Sending CSD request", content=hostscan_data)
-        self.session.cookies.set("sdesktop", auth_request_response.host_scan_token)
-        response = self.session.post(
-            self.host.vpn_url + "+CSCOE+/sdesktop/scan.xml?reusebrowser=1",
-            hostscan_data,
-        )
-        logger.info("CSD response received", content=response.content)
+        logger.debug("Calling CSD script…")
+        csd_response = subprocess.check_output(["bash", "/usr/lib/openconnect/csd-post.sh", "foo", "-ticket", auth_request_response.host_scan_ticket, "-stub", auth_request_response.host_scan_token])
+        logger.info("CSD response received", content=csd_response)
 
     def _complete_authentication(self, auth_request_response, sso_token):
         request = _create_auth_finish_request(
@@ -130,6 +126,7 @@ def _create_auth_init_request(host, url, version):
     GroupAccess = getattr(E, "group-access")
     Capabilities = E.capabilities
     AuthMethod = getattr(E, "auth-method")
+    ClientCertFail = getattr(E, "client-cert-fail")
 
     root = ConfigAuth(
         {"client": "vpn", "type": "init", "aggregate-auth-version": "2"},
@@ -137,7 +134,8 @@ def _create_auth_init_request(host, url, version):
         DeviceId("linux-64"),
         GroupSelect(host.name),
         GroupAccess(url),
-        Capabilities(AuthMethod("single-sign-on-v2")),
+        Capabilities(AuthMethod("single-sign-on-v2"), AuthMethod("multiple-cert")),
+        ClientCertFail(),
     )
     return etree.tostring(
         root, pretty_print=True, xml_declaration=True, encoding="UTF-8"
