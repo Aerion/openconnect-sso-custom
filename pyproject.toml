@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "openconnect-sso"
-version = "0.8.1.a2"
+version = "0.8.1.a3"
 description = "Wrapper script for OpenConnect supporting Azure AD (SAMLv2) authentication to Cisco SSL-VPNs"
 license = "GPL-3.0-only"
 authors = ["László Vaskó <laszlo.vasko@outlook.com>"]
@@ -36,6 +36,7 @@ PySocks = "^1.7.1"
 PyQt6 = "^6.3.0"
 PyQt6-WebEngine = "^6.3.0"
 pyotp = "^2.7.0"
+urllib3 = "^1.26" # https://github.com/jessecooper/pyetrade/issues/85#issuecomment-1822138995
 
 [tool.poetry.dev-dependencies]
 coverage_enable_subprocess = "^1.0"
