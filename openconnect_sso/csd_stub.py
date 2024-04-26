@@ -47,6 +47,10 @@ def _generate_csd_contents(csd_hostname: str):
     for hostscan_value in hostscan_values:
         entry_parts = [part.strip("'") for part in hostscan_value.split(",")]
 
+        if len(entry_parts) < 3:
+            logger.debug(f"Unsupported hostscan field '{hostscan_value}', ignoring")
+            continue
+
         entry_type = entry_parts[0]
         entry_name = entry_parts[1]
         entry_value = entry_parts[2]
