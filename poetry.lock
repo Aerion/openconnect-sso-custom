@@ -819,22 +819,21 @@ files = [
 test = ["coverage", "mypy", "ruff", "wheel"]
 
 [[package]]
-name = "PyQt6"
+name = "pyqt6"
 version = "6.7.0"
 description = "Python bindings for the Qt cross platform application toolkit"
 optional = false
 python-versions = ">=3.8"
 files = [
+    {file = "PyQt6-6.7.0-cp38-abi3-macosx_10_14_universal2.whl", hash = "sha256:919ffb01020ece42209228bf94b4f2c156a6b77cc5a69a90a05e358b0333750b"},
     {file = "PyQt6-6.7.0-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:e294f025f94493ee12b66efd6893fab309c9063172bb8a5b184f84dfc1ebcc49"},
+    {file = "PyQt6-6.7.0-cp38-abi3-win_amd64.whl", hash = "sha256:9d8865fb6357dba032002c4554a9648e88f2b4706c929cc51fba58edafad91fc"},
+    {file = "PyQt6-6.7.0.tar.gz", hash = "sha256:3d31b2c59dc378ee26e16586d9469842483588142fc377280aad22aaf2fa6235"},
 ]
 
 [package.dependencies]
 PyQt6-Qt6 = ">=6.7.0,<6.8.0"
 PyQt6-sip = ">=13.6,<14"
-
-[package.source]
-type = "url"
-url = "https://www.riverbankcomputing.com/pypi/packages/PyQt6/PyQt6-6.7.0-cp38-abi3-manylinux_2_28_x86_64.whl#sha256=e294f025f94493ee12b66efd6893fab309c9063172bb8a5b184f84dfc1ebcc49"
 
 [[package]]
 name = "pyqt6-qt6"
@@ -881,21 +880,21 @@ files = [
 
 [[package]]
 name = "pyqt6-webengine"
-version = "6.6.0"
+version = "6.7.0"
 description = "Python bindings for the Qt WebEngine framework"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-macosx_10_14_universal2.whl", hash = "sha256:cb7793f06525ca054fcc6039afd93e23b82228b880d0b1301ce635f7f3ed2edf"},
-    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:fded35fba636c4916fec84aa7c6840ad2e75d211462feb3e966f9545a59d56e6"},
-    {file = "PyQt6_WebEngine-6.6.0-cp37-abi3-win_amd64.whl", hash = "sha256:9d542738ed6e11c1978ce59035c07627def7c63eef0f59581d327f01209141bc"},
-    {file = "PyQt6_WebEngine-6.6.0.tar.gz", hash = "sha256:d50b984c3f85e409e692b156132721522d4e8cf9b6c25e0cf927eea2dfb39487"},
+    {file = "PyQt6_WebEngine-6.7.0-cp38-abi3-macosx_10_14_universal2.whl", hash = "sha256:1a3df9d6ac2dfa1bb3b826f3926c13db5b6d427e96e8d574c5aa5445a8b13db8"},
+    {file = "PyQt6_WebEngine-6.7.0-cp38-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:098b5f8d5903a3091010098694f84dd786cca878ee28a5a3ce651507d5d65468"},
+    {file = "PyQt6_WebEngine-6.7.0-cp38-abi3-win_amd64.whl", hash = "sha256:e79191e626303b11ae9a3ee98e70160f50bc90a9c4df92df17bade8290e139e8"},
+    {file = "PyQt6_WebEngine-6.7.0.tar.gz", hash = "sha256:68edc7adb6d9e275f5de956881e79cca0d71fad439abeaa10d823bff5ac55001"},
 ]
 
 [package.dependencies]
 PyQt6 = ">=6.2.0"
-PyQt6-sip = ">=13.4,<14"
-PyQt6-WebEngine-Qt6 = ">=6.6.0"
+PyQt6-sip = ">=13.6,<14"
+PyQt6-WebEngine-Qt6 = ">=6.7.0,<6.8.0"
 
 [[package]]
 name = "pyqt6-webengine-qt6"
@@ -1179,4 +1178,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "3038c3c4f0562af944b34e3c385a4fd7b025bb414cfe3e0342fecc60ad359ce9"
+content-hash = "cba6a352603f4447fb8734346c6775eb4587fbbff801c73ee45bd516e4d87d9b"

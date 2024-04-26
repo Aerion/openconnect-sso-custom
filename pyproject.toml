@@ -33,7 +33,7 @@ structlog = ">=20.1"
 toml = "^0.10"
 setuptools = ">40.0"
 PySocks = "^1.7.1"
-PyQt6 = { url = "https://www.riverbankcomputing.com/pypi/packages/PyQt6/PyQt6-6.7.0-cp38-abi3-manylinux_2_28_x86_64.whl#sha256=e294f025f94493ee12b66efd6893fab309c9063172bb8a5b184f84dfc1ebcc49" }
+PyQt6 = "^6.7"
 PyQt6-WebEngine = "^6.5"
 pyotp = "^2.7.0"
 urllib3 = "^1.26" # https://github.com/jessecooper/pyetrade/issues/85#issuecomment-1822138995
